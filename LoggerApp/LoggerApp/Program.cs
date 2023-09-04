@@ -1,9 +1,15 @@
 var builder = WebApplication.CreateBuilder(args);
+builder.Host.UseSerilog((context, services, configuration) => configuration
+    .WriteTo.MSSqlServer(
+        connectionString: context.Configuration.GetConnectionString("MSSQL"),
+        tableName: "Logs",
+        autoCreateSqlTable: true));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
+app.UseSerilogRequestLogging();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
